@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <algorithm>
 #include <fstream>
-#include <cmath>
 
 //progowanie dla wybranego zakresu 3 sk³adowych koloru
 cv::Mat filterByColor(cv::Mat& I, short minR = -1, short maxR = 500, short minG = -1, short maxG = 500, short minB = -1, short maxB = 500) {
@@ -135,14 +134,13 @@ cv::Mat_<cv::Vec3s> findContours(cv::Mat_<cv::Vec3b>& I, int& contourElements, s
 cv::Mat perform(cv::Mat I) {
 	cv::Mat_<cv::Vec3b> result;
 	cv::Mat_<cv::Vec3b> _I = I;
-	cv::Mat_<cv::Vec3b> yellow = filterByColor(I, 185, 256, 140, 230, 0, 100); //zolty
-	cv::imshow("Yello", yellow);
+	cv::Mat_<cv::Vec3b> yellow = filterByColor(I, 185, 255, 140, 230, 0, 100);
 	int contourNumbers = 0;
 	std::vector<int> circuit;
 	std::vector<float> area;
 	cv::Mat_<cv::Vec3s> contourMap = findContours(yellow, contourNumbers, circuit, area);
 	std::vector<int> redArea;
-	cv::Mat_<cv::Vec3b> red = filterByColor(I, 110, 220, 0, 135, 5, 70); //czerwony
+	cv::Mat_<cv::Vec3b> red = filterByColor(I, 110, 220, 0, 135, 5, 70);
 	for (int i = 0; i < area.size(); ++i) {
 		redArea.push_back(0);
 	}
@@ -171,14 +169,14 @@ cv::Mat perform(cv::Mat I) {
 			else if (redVal == 0)
 			{
 				redBegin = false;
-
 			}
 		}
 	}
 	std::vector<int> goodContours;
 	for (int i = 0; i < contourNumbers; ++i) {
-		if (area[i] > 100 && redArea[i] / area[i] > 0.45) {
+		if (area[i] > 100 && redArea[i] / area[i] > 0.4 && redArea[i] / area[i] < 0.7) {
 			goodContours.push_back(i);
+			std::cout << redArea[i] / area[i] << std::endl;
 		}
 	}
 	result = _I.clone();
@@ -199,19 +197,15 @@ cv::Mat perform(cv::Mat I) {
 			}
 		}
 	}
-	for (int i = 0; i < area.size(); ++i) {
-		std::cout << " i " << i << " ,redArea" << redArea[i] << std::endl;
-	}
 	return result;
 }
 int main(int, char* []) {
 
-	cv::Mat image = cv::imread("metro1.jpg");
+	cv::Mat image = cv::imread("metro3.jpg");
 	cv::imshow("Oryginal", image);
 	cv::Mat processedImage = perform(image);
-	//processedImage = image;
 	cv::imshow("Processed", processedImage);
-	cv::imwrite("Metrooo.jpg", processedImage);
+	cv::imwrite("Metro_out.jpg", processedImage);
 
 	cv::waitKey(-1);
 	return 0;
