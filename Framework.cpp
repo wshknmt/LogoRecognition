@@ -131,6 +131,7 @@ cv::Mat_<cv::Vec3s> findContours(cv::Mat_<cv::Vec3b>& I, int& contourElements, s
 	return _I;
 }
 
+//G³ówna funkcja przetwarzania obrazu
 cv::Mat perform(cv::Mat I) {
 	cv::Mat_<cv::Vec3b> result;
 	cv::Mat_<cv::Vec3b> _I = I;
